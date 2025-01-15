@@ -1,0 +1,34 @@
+
+.swiper-button-next,
+.swiper-button-prev {
+  font-size: 2rem;
+  color: #48bb78; 
+  cursor: pointer;
+  z-index: 10;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #38a169; 
+}
+
+.swiper-button-next svg,
+.swiper-button-prev svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+  stroke: currentColor; 
+}
+
+
+.swiper-pagination-bullet {
+  background-color: #48bb78; 
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #38a169;
+}
+
+.swiper-pagination {
+  bottom: 10px;
+}
