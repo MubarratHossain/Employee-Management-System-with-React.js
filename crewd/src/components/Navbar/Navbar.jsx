@@ -1,20 +1,15 @@
-import { useState,useEffect } from "react";
-import {
-    FaHome,
-    FaEnvelope,
-    FaUserPlus,
-    FaSignInAlt,
-    FaSignOutAlt,
-} from "react-icons/fa";
+import { useState, useEffect, useContext } from "react";
+import { FaHome, FaEnvelope, FaUserPlus, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { AuthContext } from "../../providers/Authprovider";
 
 const Navbar = () => {
+    const { user, logout, uploadedPhoto } = useContext(AuthContext); 
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
     const handleLogout = () => {
-        setIsLoggedIn(false);
+        logout();
         alert("You have logged out successfully!");
     };
 
@@ -33,13 +28,12 @@ const Navbar = () => {
 
     return (
         <div
-            className={`sticky top-0 z-50 bg-[#002B5B] shadow transition-opacity duration-300 ${isScrolled ? "opacity-90" : "opacity-100"
-                }`}
+            className={`sticky top-0 z-50 bg-[#002B5B] shadow transition-opacity duration-300 ${isScrolled ? "opacity-90" : "opacity-100"}`}
         >
-            <nav className=" bg-[#002B5B]">
-                <div className=" container px-6 py-4 mx-auto">
+            <nav className="bg-[#002B5B]">
+                <div className="container px-6 py-4 mx-auto">
                     <div className="lg:flex lg:items-center lg:justify-between">
-                        {/* Logo */}
+                        
                         <div className="flex items-center justify-between">
                             <a href="#" className="flex items-center space-x-2">
                                 <FaPeopleGroup className="w-6 h-6 text-green-400" />
@@ -48,8 +42,8 @@ const Navbar = () => {
                                 </span>
                             </a>
 
-                            {/* Mobile menu button */}
-                            <div className="flex lg:hidden ">
+                            
+                            <div className="flex lg:hidden">
                                 <button
                                     onClick={() => setIsOpen(!isOpen)}
                                     type="button"
@@ -65,11 +59,7 @@ const Navbar = () => {
                                             stroke="currentColor"
                                             strokeWidth="2"
                                         >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M4 8h16M4 16h16"
-                                            />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
                                         </svg>
                                     ) : (
                                         <svg
@@ -80,23 +70,16 @@ const Navbar = () => {
                                             stroke="currentColor"
                                             strokeWidth="2"
                                         >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M6 18L18 6M6 6l12 12"
-                                            />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     )}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Menu items */}
+                        
                         <div
-                            className={`absolute inset-x-0 z-40 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-[#002B5B] lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center  ${isOpen
-                                    ? "translate-x-0 opacity-100"
-                                    : "opacity-0 -translate-x-full"
-                                }`}
+                            className={`absolute inset-x-0 z-40 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-[#002B5B] lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"}`}
                         >
                             <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:mx-8">
                                 <a
@@ -113,9 +96,9 @@ const Navbar = () => {
                                 </a>
                             </div>
 
-                            {/* Authentication Buttons */}
+                            
                             <div className="flex items-center mt-4 lg:mt-0">
-                                {isLoggedIn ? (
+                                {user ? (
                                     <div className="flex items-center space-x-4">
                                         <button
                                             type="button"
@@ -124,12 +107,17 @@ const Navbar = () => {
                                         >
                                             <FaSignOutAlt className="w-5 h-5 mr-2" /> Logout
                                         </button>
+                                        
                                         <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
-                                            <img
-                                                src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-                                                className="object-cover w-full h-full"
-                                                alt="User Avatar"
-                                            />
+                                            
+                                            {user.photoURL ? (
+                                                <img src={user.photoURL} alt="Profile" className="w-8 h-8 object-cover rounded-full" />
+                                            ) : (
+                                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                    
+                                                    <span className="text-gray-600 font-semibold">U</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ) : (

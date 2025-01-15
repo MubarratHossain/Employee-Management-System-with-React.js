@@ -1,4 +1,4 @@
-import { FaPeopleGroup, FaReddit, FaFacebook, FaGithub } from "react-icons/fa6"; // Import necessary icons
+import { FaPeopleGroup, FaReddit, FaFacebook, FaGithub } from "react-icons/fa6"; 
 
 const Footer = () => {
     return (
