@@ -4,7 +4,7 @@ import { FaGoogle } from "react-icons/fa";
 import Image from './green-office-space.avif';
 import { AuthContext } from "../../providers/Authprovider";
 import Swal from "sweetalert2"; 
-import { useNavigate } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom"; 
 
 const Login = () => {
   const { loginWithEmail } = useContext(AuthContext); 
@@ -12,6 +12,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate(); 
+  const location = useLocation();
+
+  
+  const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,11 +25,9 @@ const Login = () => {
       setMessage("Password must be at least 6 characters long.");
     } else {
       try {
-        
         const response = await loginWithEmail(email, password);
         setMessage(`Welcome back, ${response.user?.email}!`);
-        
-       
+
         Swal.fire({
           title: "Login Successful",
           text: `Welcome back, ${response.user?.email}!`,
@@ -33,12 +35,12 @@ const Login = () => {
           confirmButtonText: "OK",
         });
 
-        
-        navigate("/"); 
+        // Navigate to the originally intended page or home page
+        navigate(from, { replace: true }); 
+
       } catch (error) {
         setMessage("Invalid credentials. Please try again.");
         
-      
         Swal.fire({
           title: "Login Failed",
           text: "Invalid credentials. Please try again.",
@@ -59,16 +61,13 @@ const Login = () => {
           <div className="w-full max-w-md">
             <div className="block rounded-lg bg-slate-100 shadow-lg dark:bg-neutral-800 transform transition duration-500 ease-in-out">
               <div className="p-6 text-xs md:text-xl lg:text-xl">
-                
                 <div className="text-center mb-8">
                   <FaPeopleGroup className="mx-auto w-12 h-12 text-green-400 mb-2" />
                   <h4 className="mb-2 text-xl font-semibold">We are The Crewd Team</h4>
                   <p className="text-gray-600 dark:text-gray-400">Please login to your account</p>
                 </div>
 
-               
                 <form onSubmit={handleLogin}>
-                  
                   <div className="mb-4">
                     <label htmlFor="email" className="block text-sm font-medium">
                       Email Address
@@ -84,7 +83,6 @@ const Login = () => {
                     />
                   </div>
 
-                  
                   <div className="mb-4">
                     <label htmlFor="password" className="block text-sm font-medium">
                       Password
@@ -100,7 +98,6 @@ const Login = () => {
                     />
                   </div>
 
-                  
                   <div className="text-center mb-6">
                     <button
                       type="submit"
@@ -116,14 +113,12 @@ const Login = () => {
                     </div>
                   )}
 
-                  
                   <div className="flex items-center my-4">
                     <div className="flex-grow border-t border-gray-300"></div>
                     <span className="mx-4 text-sm text-gray-600">or</span>
                     <div className="flex-grow border-t border-gray-300"></div>
                   </div>
 
-                  
                   <div className="mb-4">
                     <button
                       type="button"
@@ -134,7 +129,6 @@ const Login = () => {
                     </button>
                   </div>
 
-                  
                   <div className="text-center">
                     <p className="text-sm">
                       Don't have an account?{" "}

@@ -2,44 +2,37 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../providers/Authprovider";
+import { uploadImageToImgBB } from "../../ImageUpload/utils";
 
 const Register = () => {
   const { registerWithEmail } = useContext(AuthContext);
-  const [accountType, setAccountType] = useState(null);
-  const [uploadedPhoto, setUploadedPhoto] = useState(null);
-  const [salary, setSalary] = useState(null);
+  const [formData, setFormData] = useState({
+    accountType: "",
+    uploadedPhoto: null,
+    salary: null,
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    bankAccountNumber: "",
+  });
   const navigate = useNavigate();
 
   const handlePhotoUpload = async (event) => {
     const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
+    if (!file) return;
 
-    try {
-      const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=f672d40464065dd6ecfec4c17a491399`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    const imageUrl = await uploadImageToImgBB(file);
 
-      const data = await response.json();
-      if (data.success) {
-        const imageUrl = data.data.url;
-        setUploadedPhoto(imageUrl);
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: "Image upload failed. Please try again.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    } catch (error) {
+    if (imageUrl) {
+      setFormData((prevState) => ({
+        ...prevState,
+        uploadedPhoto: imageUrl,
+      }));
+    } else {
       Swal.fire({
         title: "Error",
-        text: "An unexpected error occurred during image upload.",
+        text: "Image upload failed. Please try again.",
         icon: "error",
         confirmButtonText: "OK",
       });
@@ -48,22 +41,27 @@ const Register = () => {
 
   const handleAccountTypeChange = (event) => {
     const selectedType = event.target.value;
-    setAccountType(selectedType);
     const fixedSalaries = { HR: 50000, Employee: 30000 };
-    setSalary(fixedSalaries[selectedType]);
+    setFormData((prevState) => ({
+      ...prevState,
+      accountType: selectedType,
+      salary: fixedSalaries[selectedType],
+    }));
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
-    const username = formData.get("username");
-    const bankAccountNumber = formData.get("bankAccountNumber");
+    const { email, password, confirmPassword, username, bankAccountNumber, accountType, uploadedPhoto } = formData;
 
-    
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
     if (!passwordRegex.test(password)) {
@@ -86,31 +84,24 @@ const Register = () => {
       return;
     }
 
-    const registrationData = {
-      email,
-      password,
-      username,
-      bankAccountNumber,
-      salary,
-      accountType,
-      uploadedPhoto,
-    };
+    if (!uploadedPhoto) {
+      Swal.fire({
+        title: "Missing Photo",
+        text: "Please upload a photo.",
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
+      return;
+    }
 
     try {
-      await registerWithEmail(email, password, uploadedPhoto);
-
-      Swal.fire({
-        title: "Account Created",
-        text: `Account created successfully for ${accountType}.`,
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(() => {
-        navigate("/");
-      });
+      await registerWithEmail(email, password, uploadedPhoto, username, bankAccountNumber, accountType, formData.salary);
+      navigate("/");
     } catch (error) {
+      console.error(error);
       Swal.fire({
         title: "Error",
-        text: "There was an issue creating your account. Please try again.",
+        text: "There was an issue connecting to the server. Please try again.",
         icon: "error",
         confirmButtonText: "Try Again",
       });
@@ -136,9 +127,9 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
               <div className="md:col-span-2 text-center mb-4">
-                {uploadedPhoto ? (
+                {formData.uploadedPhoto ? (
                   <img
-                    src={uploadedPhoto}
+                    src={formData.uploadedPhoto}
                     alt="Uploaded"
                     className="w-32 h-32 rounded-full mx-auto"
                   />
@@ -155,7 +146,7 @@ const Register = () => {
                   required
                   className="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:ring focus:ring-blue-400 focus:outline-none"
                   onChange={handleAccountTypeChange}
-                  value={accountType || ""}
+                  value={formData.accountType || ""}
                 >
                   <option value="" disabled>
                     Select a Role
@@ -173,8 +164,11 @@ const Register = () => {
                   placeholder="Username"
                   required
                   className="form-input"
+                  value={formData.username}
+                  onChange={handleChange}
                 />
               </div>
+
               <div>
                 <label className="block mb-2 text-sm text-gray-600">Email</label>
                 <input
@@ -183,8 +177,11 @@ const Register = () => {
                   placeholder="example@example.com"
                   required
                   className="form-input"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
+
               <div>
                 <label className="block mb-2 text-sm text-gray-600">Password</label>
                 <input
@@ -193,8 +190,11 @@ const Register = () => {
                   placeholder="********"
                   required
                   className="form-input"
+                  value={formData.password}
+                  onChange={handleChange}
                 />
               </div>
+
               <div>
                 <label className="block mb-2 text-sm text-gray-600">Confirm Password</label>
                 <input
@@ -203,6 +203,8 @@ const Register = () => {
                   placeholder="********"
                   required
                   className="form-input"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -214,6 +216,8 @@ const Register = () => {
                   placeholder="1234567890"
                   required
                   className="form-input"
+                  value={formData.bankAccountNumber}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -221,7 +225,7 @@ const Register = () => {
                 <label className="block mb-2 text-sm text-gray-600">Fixed Salary</label>
                 <input
                   type="text"
-                  value={salary || ""}
+                  value={formData.salary || ""}
                   readOnly
                   className="form-input bg-gray-200 cursor-not-allowed"
                 />
@@ -232,6 +236,7 @@ const Register = () => {
                 <input
                   type="file"
                   accept="image/*"
+                  name="image"
                   required
                   onChange={handlePhotoUpload}
                   className="form-input"
