@@ -3,18 +3,18 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import Image from './green-office-space.avif';
 import { AuthContext } from "../../providers/Authprovider";
-import Swal from "sweetalert2"; 
-import { useLocation, useNavigate } from "react-router-dom"; 
+import Swal from "sweetalert2";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { loginWithEmail } = useContext(AuthContext); 
+  const { loginWithEmail, loginWithGoogle } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const location = useLocation();
 
-  
+
   const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async (e) => {
@@ -36,11 +36,11 @@ const Login = () => {
         });
 
         // Navigate to the originally intended page or home page
-        navigate(from, { replace: true }); 
+        navigate(from, { replace: true });
 
       } catch (error) {
         setMessage("Invalid credentials. Please try again.");
-        
+
         Swal.fire({
           title: "Login Failed",
           text: "Invalid credentials. Please try again.",
@@ -50,6 +50,28 @@ const Login = () => {
       }
     }
   };
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await loginWithGoogle();
+      Swal.fire({
+        title: "Login Successful",
+        text: "Welcome back",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+      navigate(from, { replace: true });
+    } catch (error) {
+      Swal.fire({
+        title: "Login failed",
+        text: "Welcome",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
 
   return (
     <section
@@ -122,6 +144,7 @@ const Login = () => {
                   <div className="mb-4">
                     <button
                       type="button"
+                      onClick={handleGoogleLogin}
                       className="w-full flex items-center justify-center px-6 py-2 border rounded-md bg-gradient-to-r from-red-400 via-red-300 to-white transition-colors duration-300"
                     >
                       <FaGoogle className="mr-2" />

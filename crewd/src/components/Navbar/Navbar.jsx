@@ -53,8 +53,8 @@ const Navbar = () => {
         } else if (user?.accountType === "Employee") {
             return (
                 <>
-                    <a href="/employee-dashboard" className="flex items-center text-white hover:text-green-400">
-                        <FaTachometerAlt className="mr-2" /> Employee Dashboard
+                    <a href="/employee-worksheet" className="flex items-center text-white hover:text-green-400">
+                        <FaTachometerAlt className="mr-2" /> Employee Worksheet
                     </a>
                     <a href="/services" className="flex items-center text-white hover:text-green-400">
                         <FaServicestack className="mr-2" /> Services
@@ -120,17 +120,18 @@ const Navbar = () => {
                             {user ? (
                                 <div className="absolute top-2 md:top-2.5 right-3">
                                     <div className="w-8 h-8 md:w-10 md:h-10 overflow-hidden border-2 border-gray-400 rounded-full">
-                                        {user.photoURL ? (
+                                        {user.uploadedPhoto ? (
                                             <img
-                                                src={user.photoURL}
+                                                src={user.uploadedPhoto}
                                                 alt="Profile"
                                                 className="w-full h-full object-cover rounded-full cursor-pointer"
                                                 onClick={toggleUserDetails}
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
-                                                <span className="text-gray-600 font-semibold">U</span>
-                                            </div>
+                                           <Link to ="/login">
+                                            <div className="w-full h-full bg-green-100 flex items-center justify-center cursor-pointer">
+                                                <span className="text-black text-[8px] md:text-xs font-bold ">Login</span>
+                                            </div></Link>
                                         )}
                                     </div>
                                 </div>

@@ -96,7 +96,7 @@ const Register = () => {
 
     try {
       await registerWithEmail(email, password, uploadedPhoto, username, bankAccountNumber, accountType, formData.salary);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       Swal.fire({

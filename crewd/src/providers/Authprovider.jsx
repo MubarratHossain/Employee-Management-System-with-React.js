@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
         await updateProfile(user, { photoURL: uploadedPhoto });
       }
 
-      setUser({ ...user, photoURL: uploadedPhoto || user.photoURL });
+      setUser({ ...user});
 
       const registrationData = {
         email,
@@ -81,7 +81,7 @@ const AuthProvider = ({ children }) => {
         });
       }
 
-      await fetchUserData(user.email); // Fetch additional user data after registration
+      
 
       return user;
     } catch (error) {
@@ -120,20 +120,66 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      setUser(result.user);
-
-      const res = await axios.post("http://localhost:5000/jwt", { email: result.user.email }, { withCredentials: true });
-
-      console.log("Google Login Token:", res.data.token);
-
-      await fetchUserData(result.user.email); // Fetch additional user data after Google login
+      const { displayName, email, photoURL } = result.user;
+  
+      console.log("Google Login Success:", email);
+  
+      // Store JWT token
+      await axios.post("http://localhost:5000/jwt", { email }, { withCredentials: true });
+  
+      // Check if user exists in DB
+      const userResponse = await axios.post("http://localhost:5000/users", {
+        email,
+        username: displayName || "New Employee",
+        accountType: "Employee",
+        uploadedPhoto: photoURL || "",
+        bankAccountNumber: "",
+        salary: 30000,
+      }, { headers: { "Content-Type": "application/json" }, withCredentials: true });
+  
+      console.log("User registered in backend:", userResponse.data);
+  
+      // If bank account is missing, show modal
+      if (!userResponse.data.user.bankAccountNumber) {
+        const { value: formValues } = await Swal.fire({
+          title: "Complete Your Profile",
+          html:
+            '<input id="swal-password" type="password" placeholder="Set a password" class="swal2-input">' +
+            '<input id="swal-bank" type="text" placeholder="Bank Account Number" class="swal2-input">',
+          focusConfirm: false,
+          showCancelButton: true,
+          preConfirm: () => {
+            return {
+              password: document.getElementById("swal-password").value,
+              bankAccountNumber: document.getElementById("swal-bank").value
+            };
+          }
+        });
+  
+        if (formValues) {
+          console.log("User Input:", formValues);
+          // Send updated data to backend
+          await axios.put(`http://localhost:5000/users/${email}`, {
+            password: formValues.password,
+            bankAccountNumber: formValues.bankAccountNumber
+          });
+  
+          Swal.fire("Success!", "Your profile has been updated.", "success");
+        }
+      }
+  
+      // Fetch updated user data
+      await fetchUserData(email);
+  
     } catch (error) {
-      console.error("Google Login Error:", error.message);
+      console.error("Google Login Error:", error.response ? error.response.data : error.message);
     } finally {
       setLoading(false);
     }
   };
-
+  
+  
+  
   const logout = async () => {
     setLoading(true);
     try {
