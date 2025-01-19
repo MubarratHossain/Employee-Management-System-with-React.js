@@ -32,6 +32,38 @@ const Navbar = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+    
+    useEffect(() => {
+        console.log("User Object:", user);
+    }, [user])
+
+    // Determine which links to show based on user accountType (HR or Employee)
+    const renderLinksBasedOnRole = () => {
+        if (user?.accountType === "HR") {
+            return (
+                <>
+                    <a href="/hr-dashboard" className="flex items-center text-white hover:text-green-400">
+                        <FaTachometerAlt className="mr-2" /> HR Dashboard
+                    </a>
+                    <a href="/employee-list" className="flex items-center text-white hover:text-green-400">
+                        <FaPeopleGroup className="mr-2" /> Employee List
+                    </a>
+                </>
+            );
+        } else if (user?.accountType === "Employee") {
+            return (
+                <>
+                    <a href="/employee-dashboard" className="flex items-center text-white hover:text-green-400">
+                        <FaTachometerAlt className="mr-2" /> Employee Dashboard
+                    </a>
+                    <a href="/services" className="flex items-center text-white hover:text-green-400">
+                        <FaServicestack className="mr-2" /> Services
+                    </a>
+                </>
+            );
+        }
+        return null; // If no user role is found
+    };
 
     return (
         <div
@@ -40,18 +72,15 @@ const Navbar = () => {
             <nav className="bg-[#002B5B]">
                 <div className="container px-6 py-4 mx-auto">
                     <div className="lg:flex lg:items-center lg:justify-between lg:max-w-[90%] mx-auto">
-
-
                         <div className="flex items-center justify-between">
                             <div className="flex flex-row ml-12 lg:ml-1">
-                                <a href="#" className="flex items-center space-x-2 ">
+                                <a href="#" className="flex items-center space-x-2">
                                     <FaPeopleGroup className="w-4 h-4 md:w-6 md:h-6 text-green-400" />
                                     <span className="text-xs md:text-xl font-bold bg-gradient-to-r from-green-400 via-green-300 to-white text-transparent bg-clip-text">
                                         Crewd
                                     </span>
                                 </a>
                             </div>
-
 
                             <div className="flex lg:hidden absolute">
                                 <button
@@ -87,7 +116,6 @@ const Navbar = () => {
                             </div>
                         </div>
 
-
                         <div className="flex items-center space-x-4 ml-auto">
                             {user ? (
                                 <div className="absolute top-2 md:top-2.5 right-3">
@@ -110,26 +138,18 @@ const Navbar = () => {
                                 <div className="flex gap-4 absolute top-3 right-3">
                                     <Link to="/login"> <button className="text-xs p-1 text-white ">Login</button></Link>
                                     <Link to="/register"> <button className="text-xs p-1 text-white">Register</button></Link>
-
                                 </div>
                             )}
                         </div>
-
 
                         <div
                             className={`absolute inset-x-0 z-40 w-[50%] h-auto  p-6 mt-5 rounded-lg transition-all duration-300 ease-in-out bg-[#002B5B] lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center ${isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"}`}
                         >
                             <div className="flex flex-col lg:flex-row lg:mr-12 gap-6 items-start justify-start mt-4 lg:mt-0 space-y-4 lg:space-y-0 lg:ml-6">
-
                                 <a href="/home" className="flex items-center text-white hover:text-green-400">
                                     <FaHome className="mr-2" /> Home
                                 </a>
-                                <a href="/worksheet" className="flex items-center text-white hover:text-green-400">
-                                    <FaTachometerAlt className="mr-2" /> Worksheet
-                                </a>
-                                <a href="/services" className="flex items-center text-white hover:text-green-400">
-                                    <FaServicestack className="mr-2" /> Services
-                                </a>
+                                {renderLinksBasedOnRole()} {/* Render role-based links */}
                                 <a href="/contact" className="flex items-center text-white hover:text-green-400">
                                     <FaEnvelope className="mr-2" /> Contact
                                 </a>
@@ -145,17 +165,17 @@ const Navbar = () => {
                     <div className="flex flex-col items-start space-y-2">
                         {/* Displaying User Info */}
                         <div className="flex flex-col space-y-1">
-                            <p className="font-semibold text-xs text-gray-800">Username: {user.username}</p>
+                            <p className="font-semibold text-xs text-gray-800">Username: {user.username || "N/A"}</p>
+                            <p className="text-xs font-semibold text-gray-600">Position: {user.accountType || "N/A"}</p>
+                            <p className="text-sm text-gray-600">Salary: {user.salary || "N/A"}</p>
                             
-                            <p className="text-xs font-semibold text-gray-600">Position: {user.accountType}</p>
-                            <p className="text-sm text-gray-600">Salary: {user.salary}</p>
                         </div>
 
                         {/* Display Logout Button */}
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="w-full bg-red-600 text-white  text-xs p-1 rounded-full"
+                            className="w-full bg-red-600 text-white text-xs p-1 rounded-full"
                         >
                             Logout
                         </button>
