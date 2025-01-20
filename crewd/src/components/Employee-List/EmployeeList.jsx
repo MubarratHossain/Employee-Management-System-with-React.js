@@ -34,53 +34,57 @@ const EmployeeList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">Employee List</h1>
-      <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Email</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Verified</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Bank Account</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Salary</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Pay</th>
-            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employeeList.map((employee, index) => (
-            <tr key={index} className="border-t hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm text-gray-900">{employee.username}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{employee.email}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">
-                {employee.isVerified ? "✅" : "❌"}
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-900">{employee.bankAccountNumber}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{employee.salary}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">
-                <button
-                  disabled={!employee.isVerified}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    employee.isVerified ? "bg-blue-500" : "bg-gray-300 cursor-not-allowed"
-                  }`}
-                >
-                  Pay
-                </button>
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-900">
-                <button
-                  onClick={() => toggleVerification(employee.email)}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    employee.isVerified ? "bg-green-500" : "bg-yellow-500"
-                  }`}
-                >
-                  {employee.isVerified ? "Verified" : "Verify"}
-                </button>
-              </td>
+      <h1 className="text-2xl font-semibold mb-4 text-center">Employee List</h1>
+
+      {/* Responsive Table Wrapper */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md">
+          <thead className="bg-gray-100">
+            <tr className="text-xs md:text-sm">
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Name</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Email</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Verified</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Bank Account</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Salary</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Pay</th>
+              <th className="px-3 md:px-6 py-3 text-left text-gray-500">Details</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {employeeList.map((employee, index) => (
+              <tr key={index} className="border-t hover:bg-gray-50 text-xs md:text-sm">
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">{employee.username}</td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">{employee.email}</td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">
+                  {employee.isVerified ? "✅" : "❌"}
+                </td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">{employee.bankAccountNumber}</td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">{employee.salary}</td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">
+                  <button
+                    disabled={!employee.isVerified}
+                    className={`px-3 md:px-4 py-1 md:py-2 rounded-md text-white text-xs md:text-sm ${
+                      employee.isVerified ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-300 cursor-not-allowed"
+                    }`}
+                  >
+                    Pay
+                  </button>
+                </td>
+                <td className="px-3 md:px-6 py-2 md:py-4 text-gray-900">
+                  <button
+                    onClick={() => toggleVerification(employee.email)}
+                    className={`px-3 md:px-4 py-1 md:py-2 rounded-md text-white text-xs md:text-sm ${
+                      employee.isVerified ? "bg-green-500 hover:bg-green-600" : "bg-yellow-500 hover:bg-yellow-600"
+                    }`}
+                  >
+                    {employee.isVerified ? "Verified" : "Verify"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

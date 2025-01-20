@@ -3,7 +3,7 @@ import { FaHome, FaEnvelope, FaUserPlus, FaSignInAlt, FaSignOutAlt } from "react
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaTachometerAlt, FaServicestack } from "react-icons/fa";
 import { AuthContext } from "../../providers/Authprovider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -11,9 +11,12 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [showUserDetails, setShowUserDetails] = useState(false);
 
+    const navigate = useNavigate(); // Initialize useNavigate
+
     const handleLogout = () => {
         logout();
         alert("You have logged out successfully!");
+        navigate("/"); // Redirect to home page after logout
     };
 
     const toggleUserDetails = () => {
@@ -35,7 +38,7 @@ const Navbar = () => {
     
     useEffect(() => {
         console.log("User Object:", user);
-    }, [user])
+    }, [user]);
 
     // Determine which links to show based on user accountType (HR or Employee)
     const renderLinksBasedOnRole = () => {
@@ -53,7 +56,7 @@ const Navbar = () => {
         } else if (user?.accountType === "Employee") {
             return (
                 <>
-                    <a href="/employee-worksheet" className="flex items-center text-white hover:text-green-400">
+                    <a href="/worksheet" className="flex items-center text-white hover:text-green-400">
                         <FaTachometerAlt className="mr-2" /> Employee Worksheet
                     </a>
                     <a href="/services" className="flex items-center text-white hover:text-green-400">
@@ -128,10 +131,12 @@ const Navbar = () => {
                                                 onClick={toggleUserDetails}
                                             />
                                         ) : (
-                                           <Link to ="/login">
-                                            <div className="w-full h-full bg-green-100 flex items-center justify-center cursor-pointer">
-                                                <span className="text-black text-[8px] md:text-xs font-bold ">Login</span>
-                                            </div></Link>
+                                            <div
+                                                onClick={handleLogout}
+                                                className="w-full h-full bg-gradient-to-r from-red-400 via-red-500 to-red-600 flex items-center justify-center cursor-pointer rounded-lg p-2 shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg animate-pulse"
+                                            >
+                                                <span className="text-black text-[8px] md:text-[10px] font-bold tracking-wide">Logout</span>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -169,7 +174,6 @@ const Navbar = () => {
                             <p className="font-semibold text-xs text-gray-800">Username: {user.username || "N/A"}</p>
                             <p className="text-xs font-semibold text-gray-600">Position: {user.accountType || "N/A"}</p>
                             <p className="text-sm text-gray-600">Salary: {user.salary || "N/A"}</p>
-                            
                         </div>
 
                         {/* Display Logout Button */}

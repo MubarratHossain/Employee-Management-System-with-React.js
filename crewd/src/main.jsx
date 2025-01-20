@@ -17,6 +17,7 @@ import HRDashboard from "./components/HRDashboard/HRDashboard";
 import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
 import EmployeeList from "./components/Employee-List/EmployeeList";
+import Worksheet from "./components/WorkSheet/WorkSheet";
 
 const router = createBrowserRouter([
   {
@@ -44,11 +45,9 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/employee",
+        path: "/worksheet",
         element: (
-          <PrivateRoute allowedRoles={["Employee"]}>
-            <EmployeeDashboard />
-          </PrivateRoute>
+          <Worksheet></Worksheet>
         ),
       },
       {
