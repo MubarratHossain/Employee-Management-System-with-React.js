@@ -4,7 +4,7 @@ import { FaPeopleGroup, FaMoneyCheckDollar } from "react-icons/fa6";
 import { FaTachometerAlt, FaServicestack } from "react-icons/fa";
 import { AuthContext } from "../../providers/Authprovider";
 import { Link, useNavigate } from "react-router-dom"; 
-
+import Swal from 'sweetalert2';
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
@@ -15,8 +15,16 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logout();
-        alert("You have logged out successfully!");
-        navigate("/"); 
+        
+        // Show SweetAlert
+        Swal.fire({
+            title: 'Logged out!',
+            text: 'You have logged out successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+        }).then(() => {
+            navigate("/"); // Navigate after the alert is closed
+        });
     };
 
     const toggleUserDetails = () => {

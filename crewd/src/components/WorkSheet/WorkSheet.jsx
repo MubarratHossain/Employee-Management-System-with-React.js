@@ -22,18 +22,22 @@ const WorkSheet = () => {
 
   useEffect(() => {
     if (user) {
-      fetchUserData();
+      const userDataInterval = setInterval(() => {
+        fetchUserData();
+      }, 5000);
   
-     
-      const interval = setInterval(() => {
+      const workEntriesInterval = setInterval(() => {
         fetchWorkEntries();
       }, 10000);
   
-     
-      return () => clearInterval(interval);
+      // Cleanup function to clear both intervals
+      return () => {
+        clearInterval(userDataInterval);
+        clearInterval(workEntriesInterval);
+      };
     }
   }, [user]);
- 
+  
   
  
   

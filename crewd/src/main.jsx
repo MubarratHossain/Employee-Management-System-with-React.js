@@ -27,6 +27,10 @@ import Progress from "./components/Progress/Progress";
 import Contact from "./components/Contact/Contact";
 import VisitorMessages from "./components/VisitorMessages/VisitorMessages";
 import PaymentHistory from "./components/PaymentHistory/PaymentHistory";
+import WorkflowMonitoring from "./components/Workflow/WorkflowMonitoring";
+import Payrolll from "./components/pay/Payrolll";
+import ContractManagement from "./components/contract/ContractManagement";
+import User from "./components/userRoute/User";
 
 
 const router = createBrowserRouter([
@@ -92,7 +96,24 @@ const router = createBrowserRouter([
       {
         path:"/payment-history",
         element:<PaymentHistory></PaymentHistory>,
-      }
+      },
+      {
+        path:"/workflow-monitoring",
+        element:<WorkflowMonitoring></WorkflowMonitoring>,
+      },
+      {
+        path:"/payrolll",
+        element:<Payrolll></Payrolll>,
+      },
+      {
+        path:"/contract-management",
+        element:<ContractManagement></ContractManagement>
+      },
+      {
+        path:"/userRoutes",
+        element:<User></User>,
+
+      },
       
      
     ],

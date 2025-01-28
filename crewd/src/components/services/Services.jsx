@@ -14,7 +14,7 @@ const servicesData = [
     title: "Payroll Management",
     description: "Easily manage employee salaries, process payments, and track financial records. HR can issue payments and monitor salary distributions.",
     image: "https://i.ibb.co.com/myrVrQ1/Payroll-Systems.jpg",
-    detailsLink: "/payroll"
+    detailsLink: "/payrolll"
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ const servicesData = [
     title: "User Routes Variation",
     description: "Various user routes for monitoring employee activities, workflow progress, and payroll tasks. HR can easily navigate through reports, payments, and employee management.",
     image: "https://i.ibb.co.com/q9q3zKJ/2240x1090-1-1560x760.jpg",
-    detailsLink: "/hr-dashboard"
+    detailsLink: "/userRoutes"
   }
 ];
 
