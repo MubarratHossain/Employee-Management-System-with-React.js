@@ -10,30 +10,43 @@ const WorkSheet = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState(null);
 
-  // Form state
+ 
   const [task, setTask] = useState("");
   const [hoursWorked, setHoursWorked] = useState("");
   const [date, setDate] = useState(new Date());
   const [editingEntry, setEditingEntry] = useState(null); // For tracking which entry is being edited
 
-  // State for the table
+
   const [workEntries, setWorkEntries] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);  // State to manage modal visibility
 
   useEffect(() => {
     if (user) {
       fetchUserData();
+  
+     
+      const interval = setInterval(() => {
+        fetchWorkEntries();
+      }, 10000);
+  
+     
+      return () => clearInterval(interval);
     }
   }, [user]);
+ 
+  
+ 
+  
+  
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/users", { withCredentials: true });
+      const response = await axios.get("https://employee-server-smoky.vercel.app/users", { withCredentials: true });
       const users = response.data;
       const foundUser = users.find((userData) => userData.email.toLowerCase() === user.email.toLowerCase());
       if (foundUser) {
         setCurrentUser(foundUser);
-        fetchWorkEntries();
+        fetchWorkEntries(foundUser.username); 
       } else {
         setError("User not found.");
       }
@@ -45,31 +58,44 @@ const WorkSheet = () => {
 
   const fetchWorkEntries = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/work");
+      const response = await axios.get("https://employee-server-smoky.vercel.app/work");
       const userWorkEntries = response.data.filter((entry) => entry.userEmail === user.email);
-      setWorkEntries(userWorkEntries); // Filter and set the work entries for the current user
+      setWorkEntries(userWorkEntries);
     } catch (error) {
       console.error("Error fetching work entries:", error);
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newWorkEntry = { task, hoursWorked, date, userEmail: user.email };
+    if (!currentUser) {
+      console.error("User data not available.");
+      return;
+    }
+
+    const newWorkEntry = {
+      task,
+      hoursWorked,
+      date,
+      userEmail: user.email,
+      username: currentUser.username, // Include username
+    };
 
     try {
-      const response = await axios.post("http://localhost:5000/work", newWorkEntry, { withCredentials: true });
-      setWorkEntries([response.data, ...workEntries]); // Add to the start of the table
+      const response = await axios.post("https://employee-server-smoky.vercel.app/work", newWorkEntry, { withCredentials: true });
+      setWorkEntries([response.data, ...workEntries]); // Update UI
       resetForm();
     } catch (error) {
       console.error("Error adding work entry:", error);
     }
   };
 
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/work/${id}`, { withCredentials: true });
+      await axios.delete(`https://employee-server-smoky.vercel.app/work/${id}`, { withCredentials: true });
       setWorkEntries(workEntries.filter(entry => entry._id !== id)); // Remove from table
     } catch (error) {
       console.error("Error deleting work entry:", error);
@@ -92,7 +118,7 @@ const WorkSheet = () => {
     const updatedWorkEntry = { task, hoursWorked, date, userEmail: user.email };
 
     try {
-      const response = await axios.put(`http://localhost:5000/work/${editingEntry._id}`, updatedWorkEntry, { withCredentials: true });
+      const response = await axios.put(`https://employee-server-smoky.vercel.app/work/${editingEntry._id}`, updatedWorkEntry, { withCredentials: true });
       const updatedEntries = workEntries.map((entry) =>
         entry._id === editingEntry._id ? { ...entry, ...updatedWorkEntry } : entry
       );
@@ -111,7 +137,8 @@ const WorkSheet = () => {
     setDate(new Date());
   };
 
-  const closeModal = () => {setModalIsOpen(false);
+  const closeModal = () => {
+    setModalIsOpen(false);
     setEditingEntry(null);
   };
   if (error) {
@@ -189,30 +216,34 @@ const WorkSheet = () => {
             </form>
 
             {/* Work Entries Table */}
-            <table className="table-auto w-full text-white mb-6 text-xs">
+     <div className="overflow-x-auto">
+     <table className="table-auto w-full text-white mb-6 text-xs">
               <thead>
                 <tr>
-                  <th className="border px-2 py-1">Task</th>
-                  <th className="border px-2 py-1">Hours Worked</th>
-                  <th className="border px-2 py-1">Date</th>
-                  <th className="border px-2 py-1">Actions</th>
+                  <th className="border  text-xs  ">Username</th> {/* Ensure username is displayed */}
+                  <th className="border text-xs">Task</th>
+                  <th className="border text-xs">Hours Worked</th>
+                  <th className="border text-xs">Date</th>
+                  <th className="border text-xs">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {workEntries.map((entry) => (
                   <tr key={entry._id}>
-                    <td className="border px-1 py-0.5 text-xs sm:px-2 sm:py-1">{entry.task}</td>
-                    <td className="border px-1 py-0.5 text-xs sm:px-2 sm:py-1">{entry.hoursWorked}</td>
-                    <td className="border px-1 py-0.5 text-xs sm:px-2 sm:py-1">{new Date(entry.date).toLocaleDateString()}</td>
-                    <td className="border p-2 flex flex-col gap-4">
-                      <button onClick={() => handleEdit(entry)} className="text-yellow-500 text-xl mr-2 animate-pulse">🖊</button>
-                      <button onClick={() => handleDelete(entry._id)} className="text-red-500 text-xl ">❌</button>
+                    <td className="border px-2 py-1">{entry.username}</td> {/* Display username dynamically */}
+                    <td className="border px-2 py-1">{entry.task}</td>
+                    <td className="border px-2 py-1">{entry.hoursWorked}</td>
+                    <td className="border px-2 py-1">{new Date(entry.date).toLocaleDateString()}</td>
+                    <td className="border px-2 py-1 space-y-3  space-x-3">
+                      <button onClick={() => handleEdit(entry)} className="text-yellow-500 text-[13px]">🖊</button>
+                      <button onClick={() => handleDelete(entry._id)} className="text-red-500 text-[13px]">❌</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-
             </table>
+
+     </div>
 
             {/* Custom Modal for editing work entry */}
             {/* Custom Modal for editing work entry */}

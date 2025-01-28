@@ -13,10 +13,10 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch additional user info from backend
+
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:5000/users/${email}`, { withCredentials: true });
+      const response = await axios.get(`https://employee-server-smoky.vercel.app/users/${email}`, { withCredentials: true });
       const data = response.data;
   
       if (data) {
@@ -57,7 +57,7 @@ const AuthProvider = ({ children }) => {
         salary,
       };
 
-      const response = await fetch('http://localhost:5000/users', {
+      const response = await fetch('https://employee-server-smoky.vercel.app/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(registrationData),
@@ -102,11 +102,11 @@ const AuthProvider = ({ children }) => {
       const result = await signInWithEmailAndPassword(auth, email, password);
       setUser(result.user);
 
-      const res = await axios.post("http://localhost:5000/jwt", { email: result.user.email }, { withCredentials: true });
+      const res = await axios.post("https://employee-server-smoky.vercel.app/jwt", { email: result.user.email }, { withCredentials: true });
 
-      console.log("Login Token:", res.data.token);
+    
 
-      await fetchUserData(result.user.email); // Fetch additional user data after login
+      await fetchUserData(result.user.email); 
       return result.user;
     } catch (err) {
       console.error("Login Error:", err);
@@ -124,11 +124,11 @@ const AuthProvider = ({ children }) => {
   
       console.log("Google Login Success:", email);
   
-      // Store JWT token
-      await axios.post("http://localhost:5000/jwt", { email }, { withCredentials: true });
+     
+      await axios.post("https://employee-server-smoky.vercel.app/jwt", { email }, { withCredentials: true });
   
-      // Check if user exists in DB
-      const userResponse = await axios.post("http://localhost:5000/users", {
+      
+      const userResponse = await axios.post("https://employee-server-smoky.vercel.app/users", {
         email,
         username: displayName || "New Employee",
         accountType: "Employee",
@@ -139,7 +139,7 @@ const AuthProvider = ({ children }) => {
   
       console.log("User registered in backend:", userResponse.data);
   
-      // If bank account is missing, show modal
+      
       if (!userResponse.data.user.bankAccountNumber) {
         const { value: formValues } = await Swal.fire({
           title: "Complete Your Profile",
@@ -158,8 +158,8 @@ const AuthProvider = ({ children }) => {
   
         if (formValues) {
           console.log("User Input:", formValues);
-          // Send updated data to backend
-          await axios.put(`http://localhost:5000/users/${email}`, {
+          
+          await axios.put(`https://employee-server-smoky.vercel.app/users/${email}`, {
             password: formValues.password,
             bankAccountNumber: formValues.bankAccountNumber
           });
@@ -168,7 +168,7 @@ const AuthProvider = ({ children }) => {
         }
       }
   
-      // Fetch updated user data
+      
       await fetchUserData(email);
   
     } catch (error) {
@@ -186,7 +186,7 @@ const AuthProvider = ({ children }) => {
       await signOut(auth);
       setUser(null);
 
-      await axios.post("http://localhost:5000/logout", {}, { withCredentials: true });
+      await axios.post("https://employee-server-smoky.vercel.app/logout", {}, { withCredentials: true });
 
       console.log("User logged out, token cleared.");
     } catch (error) {
@@ -200,7 +200,7 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        fetchUserData(currentUser.email); // Fetch user data when auth state changes
+        fetchUserData(currentUser.email); 
       }
       setLoading(false);
     });

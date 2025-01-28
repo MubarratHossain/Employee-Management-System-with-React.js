@@ -13,11 +13,21 @@ import Login from "./components/Login/Login";
 import Authprovider from "./providers/Authprovider";
 
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import HRDashboard from "./components/HRDashboard/HRDashboard";
+
 import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard";
-import Unauthorized from "./components/Unauthorized/Unauthorized";
+
 import EmployeeList from "./components/Employee-List/EmployeeList";
 import Worksheet from "./components/WorkSheet/WorkSheet";
+import UsersList from "./components/UserList/UserList";
+import Payroll from "./components/Payroll/Payroll";
+
+import HrPayment from "./components/HrPayment/HrPayment";
+import EmployeeDetails from "./components/EmployeeDetails/EmployeeDetails";
+import Progress from "./components/Progress/Progress";
+import Contact from "./components/Contact/Contact";
+import VisitorMessages from "./components/VisitorMessages/VisitorMessages";
+import PaymentHistory from "./components/PaymentHistory/PaymentHistory";
+
 
 const router = createBrowserRouter([
   {
@@ -38,24 +48,59 @@ const router = createBrowserRouter([
       },
       {
         path: "/employee-list",
-        element: (
+        element: 
           
            <EmployeeList></EmployeeList>
           
-        ),
+        
       },
       {
         path: "/worksheet",
-        element: (
+        element: 
           <Worksheet></Worksheet>
-        ),
+        
       },
       {
-        path: "/unauthorized",
-        element: <Unauthorized />,
+        path: "/userList",
+        element: <UsersList></UsersList>,
       },
+      {
+        path: "/payroll",
+        element: <Payroll></Payroll>,
+      },
+      {
+        path: "/HRpayment",
+        element: <HrPayment></HrPayment>,
+      }, {
+        path: "/employee/:email",
+        element: <EmployeeDetails></EmployeeDetails>,
+      },
+
+      {
+        path: "/progress",
+        element: <Progress></Progress>,
+      },
+
+      {
+        path: "/contact",
+        element: <Contact></Contact>,
+      },
+      {
+        path: "/visitor-messages",
+        element: <VisitorMessages></VisitorMessages>,
+      },
+      {
+        path:"/payment-history",
+        element:<PaymentHistory></PaymentHistory>,
+      }
+      
+     
     ],
+    
   },
+ 
+
+ 
 ]);
 
 createRoot(document.getElementById("root")).render(
